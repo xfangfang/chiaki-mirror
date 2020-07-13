@@ -335,7 +335,8 @@ CHIAKI_EXPORT ChiakiErrorCode chiaki_takion_crypt_advance_key_pos(ChiakiTakion *
 		}
 
 		*key_pos = cur;
-		takion->key_pos_local = cur + data_size;
+		CHIAKI_LOGD(takion->log, "ADVANCE %#010llx", (unsigned long long)cur);
+		takion->key_pos_local = cur + data_size + 0x00004000;
 	}
 	else
 		*key_pos = 0;
