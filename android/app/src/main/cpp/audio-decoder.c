@@ -19,6 +19,7 @@
 
 #include <jni.h>
 
+typedef struct AMediaCodecOnAsyncNotifyCallback AMediaCodecOnAsyncNotifyCallback; // should be typedefd in NdkMediaCodec but it isn't anymore in ndk 21.0.6113669 wtf?!
 #include <media/NdkMediaCodec.h>
 #include <media/NdkMediaFormat.h>
 

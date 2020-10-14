@@ -51,6 +51,7 @@ class AnalogStickView @JvmOverloads constructor(
 		it.positionChangedCallback = this::updateState
 	}
 
+	var fixedCenter: Vector? = null
 	private var center: Vector? = null
 
 	/**

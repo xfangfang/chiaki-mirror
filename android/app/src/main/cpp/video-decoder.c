@@ -19,6 +19,7 @@
 
 #include <jni.h>
 
+typedef struct AMediaCodecOnAsyncNotifyCallback AMediaCodecOnAsyncNotifyCallback; // should be typedefd in NdkMediaCodec but it isn't anymore in ndk 21.0.6113669 wtf?!
 #include <media/NdkMediaCodec.h>
 #include <media/NdkMediaFormat.h>
 #include <android/native_window_jni.h>
@@ -95,6 +96,7 @@ void android_chiaki_video_decoder_set_surface(AndroidChiakiVideoDecoder *decoder
 	AMediaFormat_setString(format, AMEDIAFORMAT_KEY_MIME, mime);
 	AMediaFormat_setInt32(format, AMEDIAFORMAT_KEY_WIDTH, decoder->target_width);
 	AMediaFormat_setInt32(format, AMEDIAFORMAT_KEY_HEIGHT, decoder->target_height);
+	AMediaFormat_setInt32(format, AMEDIAFORMAT_KEY_LOW_LATENCY, 1);
 
 	media_status_t r = AMediaCodec_configure(decoder->codec, format, decoder->window, NULL, 0);
 	if(r != AMEDIA_OK)
@@ -160,11 +162,11 @@ bool android_chiaki_video_decoder_video_sample(uint8_t *buf, size_t buf_size, vo
 		size_t codec_sample_size = buf_size;
 		if(codec_sample_size > codec_buf_size)
 		{
-			//CHIAKI_LOGD(decoder->log, "Sample is bigger than buffer, splitting");
+			CHIAKI_LOGW(decoder->log, "Sample is bigger than buffer, splitting");
 			codec_sample_size = codec_buf_size;
 		}
 		memcpy(codec_buf, buf, codec_sample_size);
-		media_status_t r = AMediaCodec_queueInputBuffer(decoder->codec, (size_t)codec_buf_index, 0, codec_sample_size, decoder->timestamp_cur++, 0); // timestamp just raised by 1 for maximum realtime
+		media_status_t r = AMediaCodec_queueInputBuffer(decoder->codec, (size_t)codec_buf_index, 0, codec_sample_size, decoder->timestamp_cur + 1, 0); // timestamp just raised by 1 for maximum realtime
 		if(r != AMEDIA_OK)
 		{
 			CHIAKI_LOGE(decoder->log, "AMediaCodec_queueInputBuffer() failed: %d", (int)r);
