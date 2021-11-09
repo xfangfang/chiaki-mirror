@@ -403,32 +403,33 @@ void IO::SetRumble(uint8_t left, uint8_t right)
 			.amp_low = 0.0f,
 			.freq_low = 160.0f,
 			.amp_high = 0.0f,
-			.freq_high = 320.0f,
+			.freq_high = 200.0f,
 		},
 		{
 			.amp_low = 0.0f,
 			.freq_low = 160.0f,
 			.amp_high = 0.0f,
-			.freq_high = 320.0f,
+			.freq_high = 200.0f,
 		}};
 
 	int target_device = padIsHandheld(&pad) ? 0 : 1;
+	if(left > 160) left = 160;
 	if(left > 0)
 	{
-		// SDL_HapticRumblePlay(this->sdl_haptic_ptr[0], left / 100, 5000);
-		vibration_values[0].amp_low = (float)left / (float)100;
-		vibration_values[0].amp_high = (float)left / (float)100;
-		vibration_values[0].freq_low *= (float)left / (float)100;
-		vibration_values[0].freq_high *= (float)left / (float)100;
+		float l = (float)left / 255.0;
+		vibration_values[0].amp_low = l;
+		vibration_values[0].freq_low *= l;
+		vibration_values[1].amp_low = l;
+		vibration_values[1].freq_low *= l;
 	}
-
+	if(right > 160) right = 160;
 	if(right > 0)
 	{
-		// SDL_HapticRumblePlay(this->sdl_haptic_ptr[1], right / 100, 5000);
-		vibration_values[1].amp_low = (float)right / (float)100;
-		vibration_values[1].amp_high = (float)right / (float)100;
-		vibration_values[1].freq_low *= (float)left / (float)100;
-		vibration_values[1].freq_high *= (float)left / (float)100;
+		float r = (float)right /255.0;
+		vibration_values[0].amp_high = r;
+		vibration_values[0].freq_high *= r;
+		vibration_values[1].amp_high = r;
+		vibration_values[1].freq_high *= r;
 	}
 
 	// printf("left ptr %p amp_low %f amp_high %f freq_low %f freq_high %f\n",
